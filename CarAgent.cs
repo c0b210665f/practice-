@@ -5,7 +5,8 @@ using MLAgents.Sensors;
 using UnityEngine;
 using System.Linq;
 
-public class CarAgent : Agent
+
+public class CarAgent : Agent                // Agentクラスを継承
 {
     private Initialization initialization;
     [HideInInspector]
@@ -88,7 +89,7 @@ public class CarAgent : Agent
     [HideInInspector]
     public int startCarNum;
 
-    public override void Initialize()
+    public override void Initialize()     // エージェントの初期化を行う
     {
         initialization = new Initialization(this);
         movement = new Movement(this);
@@ -104,12 +105,14 @@ public class CarAgent : Agent
 
     void Update()
     {
-        timer = Time.realtimeSinceStartup;
+        timer = Time.realtimeSinceStartup;    // 経過時間をtimerフィールドに格納
+        // generateNewフラグが偽であるか、idがstartCarNum-1より大きい場合に、更新処理をスキップ
         if (!generateNew || id > startCarNum - 1) return;
-        if (time > generateInterval && carInformation.currentCarNum < limitCarNum)
+        // 一定時間が経過し、かつ現在の車の数が制限内である場合
+        if (time > generateInterval && carInformation.currentCarNum < limitCarNum)     // 51 | limitCarNum = 300
         {
-            var gameObject = Instantiate(this, _initPosition, _initRotation);
-            new_id += startCarNum;
+            var gameObject = Instantiate(this, _initPosition, _initRotation);          // 新しいエージェントを生成
+            new_id += startCarNum;                                                     // 新しいエージェントにidを設定
             gameObject.id = new_id;
             gameObject.transform.parent = this.transform.parent.gameObject.transform;
             gameObject.transform.localPosition = _initPosition;
@@ -117,8 +120,8 @@ public class CarAgent : Agent
             gameObject.speed = Random.Range(minSpeed, maxSpeed+1);
             gameObject.canGetCommonReward = true;
             gameObject.frame.GetComponent<ColorController>().ChangeColor(gameObject.speed, maxSpeed, minSpeed);
-            carInformation.currentCarNum++;
-            time = 0;
+            carInformation.currentCarNum++;                                            // 現在の車の数を増やす
+            time = 0;                                                                  // 時間をリセット
         }
     }
     
